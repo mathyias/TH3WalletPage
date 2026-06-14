@@ -271,7 +271,15 @@ function App() {
 
       await loadWallet(true)
     } catch (err) {
-      showErr(err instanceof Error ? err.message : 'Send failed')
+      const message = err instanceof Error ? err.message : 'Send failed'
+
+      if (message.includes('txn-mempool-conflict')) {
+        showErr('Previous transaction is still pending. Please wait a moment and refresh your balance before sending again.')
+      } else if (message.includes('min relay fee not met')) {
+        showErr('Network fee was too low for this transaction. Please refresh and try again.')
+      } else {
+        showErr(message)
+      }
     } finally {
       setIsSending(false)
     }
