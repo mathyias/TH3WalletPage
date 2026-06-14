@@ -2221,3 +2221,11 @@ html:not([data-extension="chrome"]) .seed-box + button {
 .send-success-msg a:hover {
   color: #ffffff;
 }
+
+/* Web wallet: tighten Send tab spacing after the navigation */
+html:not([data-extension="chrome"]) .nav-bar + input,
+html:not([data-extension="chrome"]) .nav-bar + .send-success-msg,
+html:not([data-extension="chrome"]) .nav-bar + .send-error-msg,
+html:not([data-extension="chrome"]) .nav-bar + .error-msg {
+  margin-top: 18px !important;
+}
