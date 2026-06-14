@@ -2194,3 +2194,30 @@ html:not([data-extension="chrome"]) .nav-bar {
 html:not([data-extension="chrome"]) .seed-box + button {
   margin-top: 16px !important;
 }
+
+.send-success-msg {
+  width: 100%;
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  border: 1px solid rgba(34, 197, 94, 0.55);
+  border-radius: 14px;
+  background: rgba(34, 197, 94, 0.10);
+  color: #86efac;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.35;
+  text-align: center;
+  box-shadow: 0 12px 28px rgba(34, 197, 94, 0.08);
+}
+
+.send-success-msg a {
+  display: inline-block;
+  margin-left: 6px;
+  color: #4eeaff;
+  text-decoration: none;
+  font-weight: 800;
+}
+
+.send-success-msg a:hover {
+  color: #ffffff;
+}
