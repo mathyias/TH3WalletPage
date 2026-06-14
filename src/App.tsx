@@ -37,6 +37,7 @@ function App() {
   const [sendAmount, setSendAmount] = useState(paymentRequest.amount)
   const [networkFee, setNetworkFee] = useState(FALLBACK_TX_FEE_TH3)
   const [isSending, setIsSending] = useState(false)
+  const [isRefreshingAfterSend, setIsRefreshingAfterSend] = useState(false)
   const [isLoadingTxs, setIsLoadingTxs] = useState(false)
   const [lastTxid, setLastTxid] = useState('')
   const [addressCopied, setAddressCopied] = useState(false)
@@ -275,6 +276,11 @@ function App() {
 
       if (message.includes('txn-mempool-conflict')) {
         showErr('Previous transaction is still pending. Please wait a moment and refresh your balance before sending again.')
+        setIsRefreshingAfterSend(true)
+        window.setTimeout(async () => {
+          await loadWallet(true)
+          setIsRefreshingAfterSend(false)
+        }, 15000)
       } else if (message.includes('min relay fee not met')) {
         showErr('Network fee was too low for this transaction. Please refresh and try again.')
       } else {
@@ -582,13 +588,13 @@ function App() {
                 </button>
 
                 <button
-                  disabled={balance <= 0 || isSending}
+                  disabled={balance <= 0 || isSending || isRefreshingAfterSend}
                   onClick={sendTH3}
                   style={{
                     marginTop: '14px'
                   }}
                 >
-                  {isSending ? 'Sending...' : 'Send TH3'}
+                  {isSending ? 'Sending...' : isRefreshingAfterSend ? 'Refreshing wallet...' : 'Send TH3'}
                 </button>
 
                 <div style={{ marginTop: '15px', fontSize: '12px', opacity: 0.7 }}>
