@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
-import { generateTH3Address, sendTH3Transaction } from './lib/th3'
+import { estimateTH3NetworkFee, generateTH3Address, sendTH3Transaction } from './lib/th3'
 import * as bip39 from 'bip39'
 import CryptoJS from 'crypto-js'
 import { QRCode } from 'react-qr-code'
 import './App.css'
 
-const TX_FEE_TH3 = 0.01
+const FALLBACK_TX_FEE_TH3 = 0.01
 const EXPLORER_TX_BASE = 'https://explorer.th3chain.cloud/tx'
 const WALLET_URL = 'https://wallet.th3chain.cloud/'
 
@@ -35,6 +35,7 @@ function App() {
   const [success, setSuccess] = useState('')
   const [sendTo, setSendTo] = useState(paymentRequest.send)
   const [sendAmount, setSendAmount] = useState(paymentRequest.amount)
+  const [networkFee, setNetworkFee] = useState(FALLBACK_TX_FEE_TH3)
   const [isSending, setIsSending] = useState(false)
   const [isLoadingTxs, setIsLoadingTxs] = useState(false)
   const [lastTxid, setLastTxid] = useState('')
@@ -48,8 +49,9 @@ function App() {
     : ''
 
   const amount = Number(sendAmount)
-  const maxSend = Math.max(balance - TX_FEE_TH3, 0)
-  const totalSendCost = Number.isFinite(amount) && amount > 0 ? amount + TX_FEE_TH3 : TX_FEE_TH3
+  const txFee = Number.isFinite(networkFee) && networkFee > 0 ? networkFee : FALLBACK_TX_FEE_TH3
+  const maxSend = Math.max(balance - txFee, 0)
+  const totalSendCost = Number.isFinite(amount) && amount > 0 ? amount + txFee : txFee
 
   const shortAddress = (value: string) => value ? `${value.slice(0, 10)}...${value.slice(-8)}` : ''
 
@@ -184,6 +186,8 @@ function App() {
       const decrypted = bytes.toString(CryptoJS.enc.Utf8)
 
       if (decrypted) {
+        setError('')
+        setSuccess('')
         setIsUnlocked(true)
         setSeed(decrypted)
         setPassword('')
@@ -194,6 +198,35 @@ function App() {
       showErr('Unlock failed')
     }
   }
+
+  useEffect(() => {
+    let cancelled = false
+
+    const updateFee = async () => {
+      if (!address || !isUnlocked || !Number.isFinite(amount) || amount <= 0) {
+        setNetworkFee(FALLBACK_TX_FEE_TH3)
+        return
+      }
+
+      try {
+        const estimatedFee = await estimateTH3NetworkFee(address, amount)
+
+        if (!cancelled) {
+          setNetworkFee(estimatedFee)
+        }
+      } catch {
+        if (!cancelled) {
+          setNetworkFee(FALLBACK_TX_FEE_TH3)
+        }
+      }
+    }
+
+    updateFee()
+
+    return () => {
+      cancelled = true
+    }
+  }, [address, isUnlocked, amount])
 
   const useMaxAmount = () => {
     setSendAmount(maxSend.toFixed(8))
@@ -215,7 +248,7 @@ function App() {
         return showErr('Invalid amount')
       }
 
-      if (amount + TX_FEE_TH3 > balance) {
+      if (amount + txFee > balance) {
         return showErr(`Insufficient balance. Max send is ${formatTH3(maxSend)} TH3`)
       }
 
@@ -230,6 +263,7 @@ function App() {
       })
 
       setLastTxid(result.txid)
+      setNetworkFee(result.fee)
       showSuccess(`Transaction sent: ${result.txid.slice(0, 12)}...${result.txid.slice(-8)}`)
 
       setSendTo('')
@@ -554,7 +588,7 @@ function App() {
                 </div>
 
                 <div style={{ marginTop: '8px', fontSize: '12px', opacity: 0.7 }}>
-                  Network Fee: {formatTH3(TX_FEE_TH3)} TH3
+                  Network Fee: {formatTH3(txFee)} TH3
                 </div>
 
                 <div

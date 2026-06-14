@@ -14,7 +14,9 @@ const TH3_DERIVATION_PATH = "m/44'/175'/0'/0/0"
 const COIN = 100000000
 const SIGHASH_ALL = 0x01
 
-const DEFAULT_FEE_SATS = 1000000
+const MIN_RELAY_FEE_SATS_PER_KB = 1000000
+const FEE_SAFETY_MULTIPLIER = 2
+const MIN_FEE_SATS = 1000000
 const DUST_SATS = 1000
 
 type TH3Utxo = {
@@ -36,6 +38,7 @@ type SendTH3Params = {
 type SendTH3Result = {
   txid: string
   rawTx: string
+  fee: number
 }
 
 function asBytes(data: Uint8Array): Uint8Array {
@@ -250,6 +253,72 @@ async function fetchUtxos(address: string): Promise<TH3Utxo[]> {
   }
 
   return data.filter((utxo) => utxo.confirmations > 0)
+}
+
+function estimateP2pkhTxBytes(inputCount: number, outputCount: number): number {
+  // P2PKH input is ~148 bytes, output is ~34 bytes, plus version/locktime/varints.
+  return 10 + inputCount * 148 + outputCount * 34
+}
+
+function calculateFeeSats(inputCount: number, outputCount: number): number {
+  const estimatedBytes = estimateP2pkhTxBytes(inputCount, outputCount)
+  const relayFee = Math.ceil(
+    estimatedBytes * MIN_RELAY_FEE_SATS_PER_KB / 1000
+  )
+  const safeFee = Math.ceil(relayFee * FEE_SAFETY_MULTIPLIER)
+
+  return Math.max(MIN_FEE_SATS, safeFee)
+}
+
+function selectUtxosForAmount(utxos: TH3Utxo[], amountSats: number): {
+  selected: TH3Utxo[]
+  feeSats: number
+} {
+  const selected: TH3Utxo[] = []
+  let selectedTotal = 0
+  let feeSats = MIN_FEE_SATS
+
+  for (const utxo of utxos) {
+    selected.push(utxo)
+    selectedTotal += utxo.satoshis
+
+    const outputCountWithChange = 2
+    feeSats = calculateFeeSats(selected.length, outputCountWithChange)
+
+    if (selectedTotal >= amountSats + feeSats) {
+      const change = selectedTotal - amountSats - feeSats
+
+      if (change > DUST_SATS) {
+        return { selected, feeSats }
+      }
+
+      const feeWithoutChange = calculateFeeSats(selected.length, 1)
+
+      if (selectedTotal >= amountSats + feeWithoutChange) {
+        return { selected, feeSats: feeWithoutChange }
+      }
+    }
+  }
+
+  throw new Error('Insufficient balance including fee')
+}
+
+export async function estimateTH3NetworkFee(
+  fromAddress: string,
+  amount: number
+): Promise<number> {
+  addressToPubKeyHash(fromAddress)
+
+  const amountSats = amountToSats(amount)
+  const utxos = await fetchUtxos(fromAddress)
+
+  if (utxos.length === 0) {
+    return MIN_FEE_SATS / COIN
+  }
+
+  const { feeSats } = selectUtxosForAmount(utxos, amountSats)
+
+  return feeSats / COIN
 }
 
 async function broadcastRawTx(rawTx: string): Promise<string> {
@@ -478,21 +547,7 @@ export async function sendTH3Transaction({
     throw new Error('No spendable UTXO')
   }
 
-  const selected: TH3Utxo[] = []
-  let selectedTotal = 0
-
-  for (const utxo of utxos) {
-    selected.push(utxo)
-    selectedTotal += utxo.satoshis
-
-    if (selectedTotal >= amountSats + DEFAULT_FEE_SATS) {
-      break
-    }
-  }
-
-  if (selectedTotal < amountSats + DEFAULT_FEE_SATS) {
-    throw new Error('Insufficient balance including fee')
-  }
+  const { selected, feeSats } = selectUtxosForAmount(utxos, amountSats)
 
   const rawTx = await buildSignedTransaction({
     utxos: selected,
@@ -501,13 +556,14 @@ export async function sendTH3Transaction({
     toAddress,
     fromAddress,
     amountSats,
-    feeSats: DEFAULT_FEE_SATS
+    feeSats
   })
 
   const txid = await broadcastRawTx(rawTx)
 
   return {
     txid,
-    rawTx
+    rawTx,
+    fee: feeSats / COIN
   }
 }

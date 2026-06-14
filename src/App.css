@@ -2185,3 +2185,12 @@ html:not([data-extension="chrome"]) .wallet-header-brand {
 html:not([data-extension="chrome"]) .nav-bar {
   width: 100% !important;
 }
+
+.wallet-address-label {
+  text-align: center !important;
+}
+
+/* Web wallet only: spacing in Security tab */
+html:not([data-extension="chrome"]) .seed-box + button {
+  margin-top: 16px !important;
+}
