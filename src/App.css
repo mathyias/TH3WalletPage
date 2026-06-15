@@ -2829,3 +2829,395 @@ body,
     margin-top: 8px !important;
   }
 }
+
+/* Web mobile: force wallet card to use full available width */
+@media (max-width: 720px) {
+  html:not([data-extension="chrome"]) .app-wrapper.wallet-screen {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
+  }
+
+  html:not([data-extension="chrome"]) .wallet-screen .glass-box {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    justify-self: stretch !important;
+    align-self: stretch !important;
+    box-sizing: border-box !important;
+  }
+
+  html:not([data-extension="chrome"]) .wallet-screen header,
+  html:not([data-extension="chrome"]) .wallet-screen .nav-bar,
+  html:not([data-extension="chrome"]) .wallet-screen .glass-box > div:last-child {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  html:not([data-extension="chrome"]) .wallet-screen .tx-item,
+  html:not([data-extension="chrome"]) .wallet-screen .seed-box,
+  html:not([data-extension="chrome"]) .wallet-screen .reset-btn {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+/* Web mobile: fix only History and Security tab width */
+@media (max-width: 720px) {
+  html:not([data-extension="chrome"]) .wallet-screen .glass-box.active-txs,
+  html:not([data-extension="chrome"]) .wallet-screen .glass-box.active-sec {
+    width: calc(100vw - 28px) !important;
+    max-width: calc(100vw - 28px) !important;
+    min-width: 0 !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  html:not([data-extension="chrome"]) .wallet-screen .glass-box.active-txs > div:last-child,
+  html:not([data-extension="chrome"]) .wallet-screen .glass-box.active-sec > div:last-child,
+  html:not([data-extension="chrome"]) .wallet-screen .glass-box.active-txs .scroll-area,
+  html:not([data-extension="chrome"]) .wallet-screen .glass-box.active-txs .tx-item,
+  html:not([data-extension="chrome"]) .wallet-screen .glass-box.active-txs .tx-item-modern,
+  html:not([data-extension="chrome"]) .wallet-screen .glass-box.active-sec .seed-box,
+  html:not([data-extension="chrome"]) .wallet-screen .glass-box.active-sec .seed-box + button {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  html:not([data-extension="chrome"]) .wallet-screen .glass-box.active-txs .scroll-area {
+    display: grid !important;
+    gap: 12px !important;
+  }
+}
+
+/* Web mobile: prevent tiny horizontal shift between History and Security */
+@media (max-width: 720px) {
+  html:not([data-extension="chrome"]) .wallet-screen .glass-box.active-txs,
+  html:not([data-extension="chrome"]) .wallet-screen .glass-box.active-sec {
+    overflow-x: hidden !important;
+  }
+
+  html:not([data-extension="chrome"]) .wallet-screen .glass-box.active-txs .nav-bar,
+  html:not([data-extension="chrome"]) .wallet-screen .glass-box.active-sec .nav-bar {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  html:not([data-extension="chrome"]) .wallet-screen .glass-box.active-txs .scroll-area,
+  html:not([data-extension="chrome"]) .wallet-screen .glass-box.active-sec .seed-box {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}
+
+/* Web mobile: reserve scrollbar space so wallet does not jump left/right */
+@media (max-width: 720px) {
+  html:not([data-extension="chrome"]) .wallet-screen .glass-box {
+    scrollbar-gutter: stable !important;
+  }
+
+  html:not([data-extension="chrome"]) .wallet-screen .glass-box > div:last-child {
+    scrollbar-gutter: stable !important;
+    overflow-y: scroll !important;
+  }
+
+  html:not([data-extension="chrome"]) .wallet-screen .glass-box.active-wallet > div:last-child,
+  html:not([data-extension="chrome"]) .wallet-screen .glass-box.active-txs > div:last-child,
+  html:not([data-extension="chrome"]) .wallet-screen .glass-box.active-sec > div:last-child {
+    padding-right: 10px !important;
+  }
+}
+
+/* Web mobile: one fixed wallet width for every tab */
+@media (max-width: 720px) {
+  html:not([data-extension="chrome"]) .wallet-screen .glass-box {
+    width: calc(100vw - 28px) !important;
+    max-width: 430px !important;
+    min-width: 0 !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    box-sizing: border-box !important;
+  }
+
+  html:not([data-extension="chrome"]) .wallet-screen header,
+  html:not([data-extension="chrome"]) .wallet-screen .nav-bar,
+  html:not([data-extension="chrome"]) .wallet-screen .glass-box > div:last-child {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  html:not([data-extension="chrome"]) .wallet-screen .glass-box.active-wallet > div:last-child,
+  html:not([data-extension="chrome"]) .wallet-screen .glass-box.active-send > div:last-child,
+  html:not([data-extension="chrome"]) .wallet-screen .glass-box.active-txs > div:last-child,
+  html:not([data-extension="chrome"]) .wallet-screen .glass-box.active-sec > div:last-child {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+}
+
+/* Web mobile: use more screen width while keeping tab width stable */
+@media (max-width: 720px) {
+  html:not([data-extension="chrome"]) .wallet-screen .glass-box {
+    width: calc(100vw - 16px) !important;
+    max-width: 460px !important;
+  }
+}
+
+/* Web mobile final: one stable wallet width for all tabs */
+@media (max-width: 720px) {
+  html:not([data-extension="chrome"]) .app-wrapper.wallet-screen {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    box-sizing: border-box !important;
+  }
+
+  html:not([data-extension="chrome"]) .wallet-screen .glass-box {
+    width: 100% !important;
+    max-width: 430px !important;
+    min-width: 0 !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    box-sizing: border-box !important;
+  }
+
+  html:not([data-extension="chrome"]) .wallet-screen header,
+  html:not([data-extension="chrome"]) .wallet-screen .nav-bar,
+  html:not([data-extension="chrome"]) .wallet-screen .glass-box > div:last-child {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  html:not([data-extension="chrome"]) .wallet-screen .glass-box.active-send,
+  html:not([data-extension="chrome"]) .wallet-screen .glass-box.active-wallet,
+  html:not([data-extension="chrome"]) .wallet-screen .glass-box.active-txs,
+  html:not([data-extension="chrome"]) .wallet-screen .glass-box.active-sec {
+    width: 100% !important;
+    max-width: 430px !important;
+  }
+}
+
+/* WEB MOBILE HARD RESET: same wallet frame on every tab */
+@media (max-width: 720px) {
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-width: 0 !important;
+    padding: 24px 12px 0 !important;
+    margin: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    box-sizing: border-box !important;
+  }
+
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box,
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box.active-send,
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box.active-wallet,
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box.active-txs,
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box.active-sec {
+    width: min(430px, calc(100vw - 24px)) !important;
+    min-width: 0 !important;
+    max-width: min(430px, calc(100vw - 24px)) !important;
+    margin: 0 auto !important;
+    padding: 24px !important;
+    box-sizing: border-box !important;
+    align-self: center !important;
+  }
+
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box header,
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box .nav-bar,
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box > div:last-child,
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box .scroll-area,
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box .tx-item,
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box .tx-item-modern,
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box .seed-box,
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box input,
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box button,
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box .balance-card,
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box .wallet-address {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box.active-sec {
+    min-height: auto !important;
+    height: auto !important;
+  }
+}
+
+/* Web mobile: breathing room under footer socials */
+@media (max-width: 720px) {
+  html:not([data-extension="chrome"]) .wallet-footer {
+    padding-bottom: max(18px, env(safe-area-inset-bottom)) !important;
+  }
+}
+
+/* Web mobile: reduce empty gap below tab menu */
+@media (max-width: 720px) {
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box .nav-bar {
+    margin-bottom: 8px !important;
+  }
+
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box > div:last-child {
+    padding-top: 4px !important;
+  }
+
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box .balance-card,
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box .send-error-msg,
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box input:first-of-type,
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box .scroll-area,
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box .seed-box,
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box > div:last-child > button:first-child {
+    margin-top: 0 !important;
+  }
+}
+
+/* Web mobile: pull scroll content closer to the tab menu */
+@media (max-width: 720px) {
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box > div:last-child {
+    margin-top: -18px !important;
+  }
+
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box .nav-bar {
+    margin-bottom: 0 !important;
+  }
+}
+
+/* Web mobile: bottom delete background only, keep previous layout */
+@media (max-width: 720px) {
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box .reset-btn {
+    background:
+      linear-gradient(180deg, rgba(5, 8, 22, 0.98), rgba(5, 8, 22, 1)) !important;
+    box-shadow:
+      0 -14px 28px rgba(5, 8, 22, 0.92),
+      0 0 0 1px rgba(255, 45, 85, 0.72) inset !important;
+  }
+}
+
+/* Web mobile: pin Delete Wallet at bottom like top menu */
+@media (max-width: 720px) {
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box {
+    position: relative !important;
+    padding-bottom: 86px !important;
+  }
+
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box > div:last-child {
+    padding-bottom: 92px !important;
+  }
+
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box .reset-btn {
+    position: absolute !important;
+    left: 24px !important;
+    right: 24px !important;
+    bottom: 24px !important;
+    width: auto !important;
+    z-index: 20 !important;
+    margin: 0 !important;
+    background: rgba(5, 8, 22, 0.98) !important;
+    box-shadow:
+      0 -18px 26px rgba(5, 8, 22, 0.96),
+      0 0 0 1px rgba(255, 45, 85, 0.72) inset !important;
+  }
+}
+
+/* Web mobile: full-width bottom bar behind Delete Wallet */
+@media (max-width: 720px) {
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box::before {
+    content: "" !important;
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    height: 96px !important;
+    background:
+      linear-gradient(180deg, rgba(12, 21, 39, 0.88), rgba(8, 14, 28, 0.98)) !important;
+    border-top: 1px solid rgba(78, 234, 255, 0.08) !important;
+    z-index: 18 !important;
+    pointer-events: none !important;
+  }
+
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box .reset-btn {
+    z-index: 21 !important;
+    box-shadow: 0 0 0 1px rgba(255, 45, 85, 0.78) inset !important;
+  }
+}
+
+/* Web mobile: solid bottom bar behind Delete Wallet */
+@media (max-width: 720px) {
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box::before {
+    background: #17213a !important;
+    opacity: 1 !important;
+  }
+
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box .reset-btn {
+    background: #10182c !important;
+  }
+}
+
+/* Web mobile: bottom bar matches top/menu background */
+@media (max-width: 720px) {
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box::before {
+    background: #050b19 !important;
+    opacity: 1 !important;
+    border-top: 1px solid rgba(78, 234, 255, 0.08) !important;
+  }
+
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box .reset-btn {
+    background: #050b19 !important;
+  }
+}
+
+/* Web mobile: bottom delete bar same color as wallet content under menu */
+@media (max-width: 720px) {
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box::before {
+    background: #19233d !important;
+    border-top: none !important;
+    opacity: 1 !important;
+  }
+
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box .reset-btn {
+    background: #19233d !important;
+  }
+}
+
+/* Web mobile: same footer/social spacing on every wallet tab */
+@media (max-width: 720px) {
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .wallet-footer {
+    margin-top: 22px !important;
+    padding-bottom: max(28px, env(safe-area-inset-bottom)) !important;
+  }
+
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .wallet-footer .social-strip {
+    margin-bottom: 0 !important;
+  }
+}
+
+/* Web mobile: Security follows the same wallet frame as every other tab */
+@media (max-width: 720px) {
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box.active-sec {
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: none !important;
+  }
+
+  html:not([data-extension="chrome"]) body #root .app-wrapper.wallet-screen .glass-box.active-sec > div:last-child {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: auto !important;
+    overflow-y: auto !important;
+    padding-bottom: 92px !important;
+  }
+}

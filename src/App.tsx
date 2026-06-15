@@ -294,7 +294,7 @@ function App() {
 
   return (
     <div className={`app-wrapper ${isUnlocked ? "wallet-screen" : "setup-screen"}`}>
-      <div className="glass-box">
+      <div className={`glass-box active-${activeTab}`}>
         <header>
           <div className="wallet-header-brand">
             <div className="wallet-logo-link" aria-hidden="true">
