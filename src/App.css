@@ -2765,3 +2765,59 @@ body,
     background: #020617 !important;
   }
 }
+
+/* Web mobile: fixed wallet shell, scroll only inner content */
+@media (max-width: 720px) {
+  html:not([data-extension="chrome"]),
+  html:not([data-extension="chrome"]) body,
+  html:not([data-extension="chrome"]) #root {
+    min-height: 100dvh !important;
+    height: 100dvh !important;
+    overflow: hidden !important;
+  }
+
+  html:not([data-extension="chrome"]) .app-wrapper {
+    min-height: 100dvh !important;
+    height: 100dvh !important;
+    width: 100vw !important;
+    padding: max(10px, env(safe-area-inset-top)) 10px max(10px, env(safe-area-inset-bottom)) !important;
+    display: grid !important;
+    grid-template-rows: 1fr auto !important;
+    align-items: stretch !important;
+    overflow: hidden !important;
+  }
+
+  html:not([data-extension="chrome"]) .glass-box {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    padding: 18px 14px !important;
+  }
+
+  html:not([data-extension="chrome"]) header,
+  html:not([data-extension="chrome"]) .nav-bar {
+    flex: 0 0 auto !important;
+  }
+
+  html:not([data-extension="chrome"]) .wallet-screen .glass-box > div:last-child {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    padding-right: 4px !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  html:not([data-extension="chrome"]) .setup-screen .glass-box > div:last-child {
+    flex: 0 0 auto !important;
+  }
+
+  html:not([data-extension="chrome"]) .wallet-footer {
+    flex: 0 0 auto !important;
+    margin-top: 8px !important;
+    padding-bottom: 0 !important;
+  }
+}
