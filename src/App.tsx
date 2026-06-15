@@ -754,8 +754,14 @@ function App() {
       </div>
 
       {confirmDelete && !isChromeExtension && (
-        <div className="delete-modal-backdrop">
-          <div className="delete-modal">
+        <div
+          className="delete-modal-backdrop"
+          onMouseDown={() => {
+            setDeleteSlideProgress(0)
+            setConfirmDelete(false)
+          }}
+        >
+          <div className="delete-modal" onMouseDown={(e) => e.stopPropagation()}>
             <h2>Delete wallet?</h2>
             <p>
               This removes the wallet from this browser only. Slide all the way right to unlock delete.
@@ -771,6 +777,13 @@ function App() {
                 min="0"
                 max="100"
                 value={deleteSlideProgress}
+                onMouseDown={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect()
+                  const startX = e.clientX - rect.left
+                  if (startX > 34) {
+                    e.preventDefault()
+                  }
+                }}
                 onChange={(e) => setDeleteSlideProgress(Number(e.target.value))}
               />
             </div>
