@@ -2605,3 +2605,144 @@ html:not([data-extension="chrome"]) .wallet-footer .social-strip .social-label {
     height: 14px !important;
   }
 }
+
+/* iOS Safari: keep browser bars and safe areas dark */
+:root {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  background-color: #020617 !important;
+}
+
+body {
+  overscroll-behavior-y: none;
+}
+
+@supports (height: 100dvh) {
+  html,
+  body,
+  #root {
+    min-height: 100dvh;
+  }
+}
+
+/* Web mobile: show only social icons, no leftover text */
+@media (max-width: 720px) {
+  html:not([data-extension="chrome"]) .wallet-footer .social-strip {
+    gap: 12px !important;
+  }
+
+  html:not([data-extension="chrome"]) .wallet-footer .social-strip a {
+    width: 46px !important;
+    min-width: 46px !important;
+    max-width: 46px !important;
+    height: 46px !important;
+    padding: 0 !important;
+    gap: 0 !important;
+    overflow: hidden !important;
+    font-size: 0 !important;
+  }
+
+  html:not([data-extension="chrome"]) .wallet-footer .social-strip .social-label {
+    display: none !important;
+    width: 0 !important;
+    max-width: 0 !important;
+    overflow: hidden !important;
+    opacity: 0 !important;
+  }
+
+  html:not([data-extension="chrome"]) .wallet-footer .social-strip .social-icon {
+    width: 28px !important;
+    height: 28px !important;
+    margin: 0 !important;
+  }
+}
+
+/* Web desktop/tablet: social links with icon + label */
+@media (min-width: 721px) {
+  html:not([data-extension="chrome"]) .wallet-footer .social-strip {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 12px !important;
+    flex-wrap: nowrap !important;
+  }
+
+  html:not([data-extension="chrome"]) .wallet-footer .social-strip a {
+    width: auto !important;
+    min-width: 122px !important;
+    max-width: none !important;
+    height: 44px !important;
+    padding: 0 16px 0 12px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 9px !important;
+    overflow: visible !important;
+    font-size: 13px !important;
+    line-height: 1 !important;
+  }
+
+  html:not([data-extension="chrome"]) .wallet-footer .social-strip .social-label {
+    display: inline-block !important;
+    width: auto !important;
+    max-width: none !important;
+    overflow: visible !important;
+    opacity: 1 !important;
+    font-size: 13px !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+  }
+
+  html:not([data-extension="chrome"]) .wallet-footer .social-strip .social-icon {
+    width: 24px !important;
+    height: 24px !important;
+    margin: 0 !important;
+  }
+}
+
+/* Final web social fix: icon bubble only, label plain text */
+html:not([data-extension="chrome"]) .wallet-footer .social-strip a {
+  color: #ffffff !important;
+}
+
+html:not([data-extension="chrome"]) .wallet-footer .social-strip .social-label {
+  display: inline-flex !important;
+  align-items: center !important;
+  width: auto !important;
+  min-width: 0 !important;
+  height: auto !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #ffffff !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  opacity: 1 !important;
+  overflow: visible !important;
+}
+
+html:not([data-extension="chrome"]) .wallet-footer .social-strip .social-icon {
+  display: inline-grid !important;
+  place-items: center !important;
+  width: 24px !important;
+  min-width: 24px !important;
+  height: 24px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 999px !important;
+  background: #4eeaff !important;
+  color: #020617 !important;
+}
+
+@media (max-width: 720px) {
+  html:not([data-extension="chrome"]) .wallet-footer .social-strip .social-label {
+    display: none !important;
+  }
+}
