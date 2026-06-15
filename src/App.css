@@ -2746,3 +2746,22 @@ html:not([data-extension="chrome"]) .wallet-footer .social-strip .social-icon {
     display: none !important;
   }
 }
+
+/* iOS Safari dark/light mode browser chrome fix */
+html {
+  background: #020617 !important;
+  color-scheme: dark !important;
+}
+
+body,
+#root {
+  background: #020617 !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  html,
+  body,
+  #root {
+    background: #020617 !important;
+  }
+}
