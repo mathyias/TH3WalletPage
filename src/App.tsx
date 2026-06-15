@@ -822,17 +822,29 @@ function App() {
           Back to main page
         </a>
         <div className="social-strip" aria-label="TH3Chain social links">
-          <a href="https://x.com/TH3ChainCloud" target="_blank" rel="noreferrer">
-            <span>X</span>
-            X / Twitter
+          <a href="https://x.com/TH3ChainCloud" target="_blank" rel="noreferrer" aria-label="TH3Chain on X">
+            <span className="social-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M17.53 3h3.02l-6.6 7.55L21.7 21h-6.08l-4.76-6.22L5.42 21H2.38l7.06-8.07L2 3h6.23l4.3 5.69L17.53 3Zm-1.06 16.16h1.67L7.32 4.74H5.53l10.94 14.42Z" />
+              </svg>
+            </span>
+            <span className="social-label">X / Twitter</span>
           </a>
-          <a href="https://t.me/TH3ChainCloud" target="_blank" rel="noreferrer">
-            <span>TG</span>
-            Telegram
+          <a href="https://t.me/TH3ChainCloud" target="_blank" rel="noreferrer" aria-label="TH3Chain on Telegram">
+            <span className="social-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M21.78 4.36 18.5 19.82c-.25 1.1-.9 1.36-1.82.85l-5.02-3.7-2.42 2.33c-.27.27-.5.5-1.03.5l.37-5.1 9.28-8.39c.4-.36-.09-.56-.62-.2L5.77 13.34.83 11.8c-1.07-.34-1.09-1.07.22-1.58L20.4 2.76c.9-.33 1.68.2 1.38 1.6Z" />
+              </svg>
+            </span>
+            <span className="social-label">Telegram</span>
           </a>
-          <a href="mailto:contact@th3chain.cloud">
-            <span>@</span>
-            Contact
+          <a href="mailto:contact@th3chain.cloud" aria-label="Contact TH3Chain">
+            <span className="social-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M4.5 5.5h15A2.5 2.5 0 0 1 22 8v8a2.5 2.5 0 0 1-2.5 2.5h-15A2.5 2.5 0 0 1 2 16V8a2.5 2.5 0 0 1 2.5-2.5Zm0 2 7.5 5.05L19.5 7.5h-15Zm15 9A.5.5 0 0 0 20 16V9.28l-7.44 5.02a1 1 0 0 1-1.12 0L4 9.28V16a.5.5 0 0 0 .5.5h15Z" />
+              </svg>
+            </span>
+            <span className="social-label">Contact</span>
           </a>
         </div>
       </footer>
