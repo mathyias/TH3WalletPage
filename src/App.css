@@ -2766,40 +2766,43 @@ body,
   }
 }
 
-/* Web mobile: fixed wallet shell, scroll only inner content */
+/* Web mobile final: login natural, wallet header/footer stable, content scrolls */
 @media (max-width: 720px) {
-  html:not([data-extension="chrome"]),
   html:not([data-extension="chrome"]) body,
   html:not([data-extension="chrome"]) #root {
     min-height: 100dvh !important;
-    height: 100dvh !important;
-    overflow: hidden !important;
+    background: #020617 !important;
   }
 
-  html:not([data-extension="chrome"]) .app-wrapper {
+  html:not([data-extension="chrome"]) .app-wrapper.setup-screen {
+    min-height: 100dvh !important;
+    height: auto !important;
+    overflow: visible !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  html:not([data-extension="chrome"]) .app-wrapper.wallet-screen {
     min-height: 100dvh !important;
     height: 100dvh !important;
-    width: 100vw !important;
-    padding: max(10px, env(safe-area-inset-top)) 10px max(10px, env(safe-area-inset-bottom)) !important;
-    display: grid !important;
-    grid-template-rows: 1fr auto !important;
-    align-items: stretch !important;
     overflow: hidden !important;
+    display: grid !important;
+    grid-template-rows: minmax(0, 1fr) auto !important;
+    padding: max(10px, env(safe-area-inset-top)) 10px max(10px, env(safe-area-inset-bottom)) !important;
   }
 
-  html:not([data-extension="chrome"]) .glass-box {
-    width: 100% !important;
-    max-width: 100% !important;
+  html:not([data-extension="chrome"]) .wallet-screen .glass-box {
     height: 100% !important;
     min-height: 0 !important;
+    overflow: hidden !important;
     display: flex !important;
     flex-direction: column !important;
-    overflow: hidden !important;
-    padding: 18px 14px !important;
+    padding: 16px 14px 12px !important;
+    gap: 10px !important;
   }
 
-  html:not([data-extension="chrome"]) header,
-  html:not([data-extension="chrome"]) .nav-bar {
+  html:not([data-extension="chrome"]) .wallet-screen header {
     flex: 0 0 auto !important;
   }
 
@@ -2807,17 +2810,22 @@ body,
     flex: 1 1 auto !important;
     min-height: 0 !important;
     overflow-y: auto !important;
-    padding-right: 4px !important;
     -webkit-overflow-scrolling: touch !important;
+    padding: 10px 4px 0 !important;
   }
 
-  html:not([data-extension="chrome"]) .setup-screen .glass-box > div:last-child {
-    flex: 0 0 auto !important;
+  html:not([data-extension="chrome"]) .wallet-screen .reset-btn {
+    position: sticky !important;
+    bottom: 0 !important;
+    z-index: 5 !important;
+    margin-top: 14px !important;
+    margin-bottom: 0 !important;
+    background: rgba(14, 20, 40, 0.96) !important;
+    backdrop-filter: blur(12px) !important;
   }
 
-  html:not([data-extension="chrome"]) .wallet-footer {
+  html:not([data-extension="chrome"]) .wallet-screen .wallet-footer {
     flex: 0 0 auto !important;
     margin-top: 8px !important;
-    padding-bottom: 0 !important;
   }
 }
