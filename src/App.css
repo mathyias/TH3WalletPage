@@ -2229,3 +2229,296 @@ html:not([data-extension="chrome"]) .nav-bar + .send-error-msg,
 html:not([data-extension="chrome"]) .nav-bar + .error-msg {
   margin-top: 18px !important;
 }
+
+html:not([data-extension="chrome"]) .nav-bar {
+  margin-bottom: 18px !important;
+}
+
+html:not([data-extension="chrome"]) .nav-bar {
+  margin-bottom: 10px !important;
+}
+
+html:not([data-extension="chrome"]) .nav-bar {
+  margin-bottom: 5px !important;
+}
+
+/* Web wallet: compact Send tab layout */
+html:not([data-extension="chrome"]) .wallet-screen .glass-box {
+  gap: 18px !important;
+}
+
+html:not([data-extension="chrome"]) .wallet-screen .nav-bar {
+  margin-bottom: 4px !important;
+}
+
+html:not([data-extension="chrome"]) .wallet-screen .nav-bar + input {
+  margin-top: 0 !important;
+}
+
+.delete-confirm-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+}
+
+.delete-confirm-row .reset-btn,
+.delete-confirm-row .cancel-delete-btn {
+  width: 100%;
+  min-height: 48px;
+  margin: 0;
+}
+
+.cancel-delete-btn {
+  border: 1px solid rgba(78, 234, 255, 0.35);
+  background: rgba(78, 234, 255, 0.08);
+  color: #4eeaff;
+  border-radius: 18px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.cancel-delete-btn:hover {
+  background: rgba(78, 234, 255, 0.16);
+}
+
+.confirm-delete-btn {
+  color: #ff4778;
+}
+
+.delete-confirm-panel {
+  width: 100%;
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid rgba(255, 71, 120, 0.42);
+  border-radius: 18px;
+  background: rgba(255, 71, 120, 0.07);
+}
+
+.delete-confirm-copy {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.delete-confirm-copy strong {
+  color: #ff4778;
+  letter-spacing: 0.06em;
+}
+
+.delete-confirm-input {
+  width: 100%;
+  min-height: 42px;
+  margin: 0 !important;
+  text-align: center;
+  border-color: rgba(255, 71, 120, 0.42) !important;
+  background: rgba(2, 6, 23, 0.34) !important;
+  color: #ffffff !important;
+}
+
+.delete-confirm-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.delete-confirm-actions button {
+  min-height: 42px;
+  border-radius: 14px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.delete-cancel-btn {
+  border: 1px solid rgba(78, 234, 255, 0.35);
+  background: rgba(78, 234, 255, 0.10);
+  color: #4eeaff;
+}
+
+.delete-confirm-btn {
+  border: 1px solid rgba(255, 71, 120, 0.52);
+  background: rgba(255, 71, 120, 0.16);
+  color: #ff7aa0;
+}
+
+.delete-confirm-btn:not(:disabled) {
+  background: linear-gradient(135deg, #ff4778, #ff7aa0);
+  color: #020617;
+  box-shadow: 0 14px 28px rgba(255, 71, 120, 0.18);
+}
+
+.delete-confirm-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Compact delete confirmation */
+.delete-confirm-panel {
+  max-width: 92%;
+  margin: 8px auto 18px !important;
+  padding: 10px 12px !important;
+  gap: 8px !important;
+  border-radius: 16px !important;
+}
+
+.delete-confirm-copy {
+  font-size: 11px !important;
+  line-height: 1.25 !important;
+}
+
+.delete-confirm-input {
+  min-height: 38px !important;
+  height: 38px !important;
+  padding: 8px 12px !important;
+  font-size: 12px !important;
+  border-radius: 14px !important;
+}
+
+.delete-confirm-actions {
+  gap: 8px !important;
+}
+
+.delete-confirm-actions button {
+  min-height: 38px !important;
+  height: 38px !important;
+  padding: 8px 12px !important;
+  border-radius: 13px !important;
+  font-size: 12px !important;
+}
+
+html:not([data-extension="chrome"]) .glass-box {
+  padding-bottom: 26px !important;
+}
+
+.delete-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(2, 6, 23, 0.72);
+  backdrop-filter: blur(12px);
+}
+
+.delete-modal {
+  width: min(390px, 100%);
+  display: grid;
+  gap: 12px;
+  padding: 22px;
+  border: 1px solid rgba(255, 71, 120, 0.42);
+  border-radius: 24px;
+  background: linear-gradient(145deg, rgba(25, 34, 58, 0.98), rgba(10, 16, 31, 0.98));
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
+}
+
+.delete-modal h2 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 22px;
+  text-align: center;
+}
+
+.delete-modal p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 13px;
+  line-height: 1.45;
+  text-align: center;
+}
+
+.delete-modal strong {
+  color: #ff4778;
+  letter-spacing: 0.06em;
+}
+
+.delete-modal .delete-confirm-input {
+  width: 100%;
+  min-height: 44px;
+  margin: 2px 0 0 !important;
+  text-align: center;
+  border-color: rgba(255, 71, 120, 0.45) !important;
+  background: rgba(2, 6, 23, 0.35) !important;
+  color: #ffffff !important;
+}
+
+.delete-modal .delete-confirm-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.delete-modal .delete-confirm-actions button {
+  min-height: 42px;
+  border-radius: 14px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.delete-slide-shell {
+  position: relative;
+  height: 48px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 71, 120, 0.45);
+  border-radius: 999px;
+  background: rgba(2, 6, 23, 0.42);
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.delete-slide-shell.unlocked {
+  border-color: rgba(34, 197, 94, 0.68);
+  box-shadow: 0 0 26px rgba(34, 197, 94, 0.18);
+}
+
+.delete-slide-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0;
+  background: linear-gradient(135deg, rgba(255, 71, 120, 0.42), rgba(255, 122, 160, 0.34));
+  transition: width 120ms ease, background 180ms ease;
+}
+
+.delete-slide-shell.unlocked .delete-slide-fill {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.88), rgba(78, 234, 255, 0.55));
+}
+
+.delete-slide-label {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 13px;
+  font-weight: 900;
+  pointer-events: none;
+}
+
+.delete-slide-shell.unlocked .delete-slide-label {
+  color: #ecfdf5;
+}
+
+.delete-slide-range {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0 !important;
+  opacity: 0;
+  cursor: grab;
+}
+
+.delete-slide-range:active {
+  cursor: grabbing;
+}
+
+/* Web only: delete wallet modal and slide confirmation */
+html[data-extension="chrome"] .delete-modal-backdrop,
+html[data-extension="chrome"] .delete-modal,
+html[data-extension="chrome"] .delete-slide-shell,
+html[data-extension="chrome"] .delete-slide-fill,
+html[data-extension="chrome"] .delete-slide-label,
+html[data-extension="chrome"] .delete-slide-range {
+  display: none !important;
+}

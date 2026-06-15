@@ -42,6 +42,7 @@ function App() {
   const [lastTxid, setLastTxid] = useState('')
   const [addressCopied, setAddressCopied] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
+  const [deleteSlideProgress, setDeleteSlideProgress] = useState(0)
   const isChromeExtension = new URLSearchParams(window.location.search).get('extension') === 'chrome'
   const [showSeed, setShowSeed] = useState(false)
 
@@ -731,37 +732,77 @@ function App() {
               </>
             )}
 
-            {!confirmDelete ? (
-              <button
-                className="reset-btn"
-                onClick={() => setConfirmDelete(true)}
-              >
-                Delete Wallet
-              </button>
-            ) : (
-              <div className="delete-confirm">
-                <button
-                  type="button"
-                  className="delete-cancel-btn"
-                  onClick={() => setConfirmDelete(false)}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  className="delete-confirm-btn"
-                  onClick={() => {
-                    localStorage.clear()
-                    window.location.reload()
-                  }}
-                >
-                  Confirm
-                </button>
-              </div>
-            )}
+            <button
+              className="reset-btn"
+              onClick={() => {
+                if (isChromeExtension) {
+                  const confirmed = window.confirm('Delete this wallet from this browser?')
+                  if (!confirmed) return
+                  localStorage.clear()
+                  window.location.reload()
+                  return
+                }
+
+                setDeleteSlideProgress(0)
+                setConfirmDelete(true)
+              }}
+            >
+              Delete Wallet
+            </button>
           </div>
         )}
       </div>
+
+      {confirmDelete && !isChromeExtension && (
+        <div className="delete-modal-backdrop">
+          <div className="delete-modal">
+            <h2>Delete wallet?</h2>
+            <p>
+              This removes the wallet from this browser only. Slide all the way right to unlock delete.
+            </p>
+            <div className={`delete-slide-shell ${deleteSlideProgress >= 100 ? 'unlocked' : ''}`}>
+              <div className="delete-slide-fill" style={{ width: `${deleteSlideProgress}%` }} />
+              <div className="delete-slide-label">
+                {deleteSlideProgress >= 100 ? 'Unlocked' : 'Slide to confirm'}
+              </div>
+              <input
+                className="delete-slide-range"
+                type="range"
+                min="0"
+                max="100"
+                value={deleteSlideProgress}
+                onChange={(e) => setDeleteSlideProgress(Number(e.target.value))}
+              />
+            </div>
+
+            <div className="delete-confirm-actions">
+              <button
+                type="button"
+                className="delete-cancel-btn"
+                onClick={() => {
+                  setDeleteSlideProgress(0)
+                  setConfirmDelete(false)
+                }}
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                className="delete-confirm-btn"
+                disabled={deleteSlideProgress < 100}
+                onClick={() => {
+                  if (deleteSlideProgress < 100) return
+                  localStorage.clear()
+                  window.location.reload()
+                }}
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <footer className="wallet-footer">
         <a className="wallet-footer-link" href="https://th3chain.cloud">
