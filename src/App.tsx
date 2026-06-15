@@ -846,6 +846,23 @@ function App() {
             </span>
             <span className="social-label">Contact</span>
           </a>
+
+          {!isChromeExtension && (
+            <a
+              className="chrome-store-link"
+              href="https://chromewebstore.google.com/detail/th3-wallet/kngpfocihoddeicehgikkgjbpkfnpial"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="TH3 Wallet Chrome extension"
+            >
+              <span className="social-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M12 2a10 10 0 0 1 8.66 5H12a5 5 0 0 0-4.33 2.5L4.2 3.5A9.96 9.96 0 0 1 12 2Zm0 20a10 10 0 0 1-8.66-15l4.33 7.5A5 5 0 0 0 12 17h6.93A9.98 9.98 0 0 1 12 22Zm0-7.2A2.8 2.8 0 1 1 12 9.2a2.8 2.8 0 0 1 0 5.6Zm2.17.2A5 5 0 0 0 16.33 10h6.93A10 10 0 0 1 20 20.5L14.17 15Z" />
+                </svg>
+              </span>
+              <span className="social-label">Chrome</span>
+            </a>
+          )}
         </div>
       </footer>
     </div>
