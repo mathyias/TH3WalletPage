@@ -3221,3 +3221,20 @@ body,
     padding-bottom: 92px !important;
   }
 }
+
+/* Web wallet footer: Chrome link below social buttons */
+.wallet-footer .social-strip .chrome-store-link {
+  flex-basis: 100%;
+  width: min(260px, 100%);
+  margin: 2px auto 0;
+  justify-content: center;
+}
+
+@media (max-width: 620px) {
+  .wallet-footer .social-strip .chrome-store-link {
+    width: 42px;
+    min-width: 42px;
+    flex-basis: auto;
+    margin: 0;
+  }
+}
