@@ -5438,3 +5438,65 @@ html body #root .app-wrapper.wallet-screen .primary-action:not(.send-action) {
     inset 0 1px 0 rgba(255, 255, 255, 0.35),
     0 12px 24px rgba(111, 242, 231, 0.13) !important;
 }
+
+/* FINAL DESKTOP VERTICAL CENTERING */
+html body #root {
+  place-items: center !important;
+  padding: 24px 0 !important;
+}
+
+html body #root .app-wrapper.wallet-screen {
+  height: min(844px, calc(100dvh - 48px)) !important;
+  min-height: min(720px, calc(100dvh - 48px)) !important;
+}
+
+html body #root .app-wrapper.setup-screen {
+  height: min(844px, calc(100dvh - 48px)) !important;
+}
+
+html body #root .wallet-side-rail {
+  top: max(24px, calc((100dvh - min(844px, calc(100dvh - 48px))) / 2)) !important;
+}
+
+html body #root .app-wrapper.setup-screen + .wallet-side-rail {
+  top: max(24px, calc((100dvh - min(844px, calc(100dvh - 48px))) / 2)) !important;
+}
+
+@media (max-width: 430px), (max-height: 740px) {
+  html body #root {
+    place-items: start center !important;
+    padding: 0 !important;
+  }
+
+  html body #root .app-wrapper.wallet-screen,
+  html body #root .app-wrapper.setup-screen {
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+  }
+}
+
+/* FINAL BALANCE FIT */
+html body #root .app-wrapper.wallet-screen .balance-card {
+  container-type: inline-size !important;
+}
+
+html body #root .app-wrapper.wallet-screen .balance-value {
+  display: block !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  font-size: clamp(38px, 13cqw, 48px) !important;
+}
+
+html body #root .app-wrapper.wallet-screen .balance-value-md {
+  font-size: clamp(32px, 10.5cqw, 40px) !important;
+}
+
+html body #root .app-wrapper.wallet-screen .balance-value-sm {
+  font-size: clamp(28px, 9cqw, 34px) !important;
+}
+
+html body #root .app-wrapper.wallet-screen .balance-value-xs {
+  font-size: clamp(24px, 7.5cqw, 29px) !important;
+}

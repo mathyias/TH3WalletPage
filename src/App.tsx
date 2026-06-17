@@ -78,6 +78,24 @@ function App() {
     })
   }
 
+  const formatBalance = (value: number) => {
+    const safeValue = Number.isFinite(value) ? value : 0
+    const absoluteValue = Math.abs(safeValue)
+
+    if (absoluteValue >= 100000) return formatTH3(safeValue, 2)
+    if (absoluteValue >= 1000) return formatTH3(safeValue, 4)
+
+    return formatTH3(safeValue)
+  }
+
+  const getBalanceValueClass = (value: string) => {
+    if (value.length >= 18) return 'balance-value balance-value-xs'
+    if (value.length >= 15) return 'balance-value balance-value-sm'
+    if (value.length >= 12) return 'balance-value balance-value-md'
+
+    return 'balance-value'
+  }
+
   const shortHash = (value?: string) => {
     if (!value) return ''
     if (value.length <= 20) return value
@@ -313,6 +331,8 @@ function App() {
     }
   }
 
+  const balanceDisplay = formatBalance(Number(balance))
+
   return (
     <div className={`app-wrapper ${isUnlocked ? "wallet-screen" : "setup-screen"}`}>
       <header className="wallet-brand-top">
@@ -506,8 +526,8 @@ function App() {
                     Available Balance
                   </div>
 
-                  <div className="balance-value">
-                    {formatTH3(Number(balance))}
+                  <div className={getBalanceValueClass(balanceDisplay)}>
+                    {balanceDisplay}
                   </div>
 
                   <div className="balance-unit">
