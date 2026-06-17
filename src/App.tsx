@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { estimateTH3NetworkFee, generateTH3Address, sendTH3Transaction } from './lib/th3'
 import * as bip39 from 'bip39'
 import CryptoJS from 'crypto-js'
@@ -8,6 +8,19 @@ import './App.css'
 const FALLBACK_TX_FEE_TH3 = 0.01
 const EXPLORER_TX_BASE = 'https://explorer.th3chain.cloud/tx'
 const WALLET_URL = 'https://wallet.th3chain.cloud/'
+
+type WalletTransaction = {
+  txid?: string
+  type?: string
+  amount?: number
+  received?: number
+  sentInput?: number
+  sentToOthers?: number
+  fee?: number
+  change?: number
+  confirmations?: number
+  time?: number
+}
 
 function getPaymentRequest() {
   const params = new URLSearchParams(window.location.search)
@@ -25,7 +38,7 @@ function App() {
   const [activeTab, setActiveTab] = useState(paymentRequest.send ? 'send' : 'wallet')
   const [address, setAddress] = useState(localStorage.getItem('th3_address') || '')
   const [balance, setBalance] = useState(0)
-  const [txs, setTxs] = useState<any[]>([])
+  const [txs, setTxs] = useState<WalletTransaction[]>([])
   const [password, setPassword] = useState('')
   const [tempSeed, setTempSeed] = useState('')
   const [seed, setSeed] = useState('')
@@ -43,7 +56,6 @@ function App() {
   const [addressCopied, setAddressCopied] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [deleteSlideProgress, setDeleteSlideProgress] = useState(0)
-  const isChromeExtension = new URLSearchParams(window.location.search).get('extension') === 'chrome'
   const [showSeed, setShowSeed] = useState(false)
 
   const receiveLink = address
@@ -72,8 +84,9 @@ function App() {
     return `${value.slice(0, 12)}...${value.slice(-8)}`
   }
 
-  const getTxInfoForAddress = (tx: any) => {
+  const getTxInfoForAddress = (tx: WalletTransaction) => {
     const confirmations = Number(tx.confirmations || 0)
+    const txType = tx.type || ''
 
     const directionMap: Record<string, string> = {
       sent: 'Sent',
@@ -85,7 +98,7 @@ function App() {
     }
 
     return {
-      direction: directionMap[tx.type] || 'Related',
+      direction: directionMap[txType] || 'Related',
       displayAmount: Number(tx.amount || 0),
       received: Number(tx.received || 0),
       sent: Number(tx.sentInput || 0),
@@ -95,8 +108,8 @@ function App() {
       confirmations,
       isPositive: Number(tx.amount || 0) >= 0,
       isConfirmed: confirmations > 0,
-      isMining: tx.type === 'mining' || tx.type === 'immature_mining',
-      isMiningMature: tx.type === 'mining'
+      isMining: txType === 'mining' || txType === 'immature_mining',
+      isMiningMature: txType === 'mining'
     }
   }
 
@@ -110,7 +123,7 @@ function App() {
     setTimeout(() => setSuccess(''), 8000)
   }
 
-  const loadWallet = async (silent = false) => {
+  const loadWallet = useCallback(async (silent = false) => {
     if (!address || !isUnlocked) return
 
     try {
@@ -122,7 +135,7 @@ function App() {
         `https://api.th3chain.cloud/api/address/${address}`
       )
 
-      const balanceData = await balanceRes.json()
+      const balanceData = await balanceRes.json() as { balance?: number }
       setBalance(balanceData.balance || 0)
 
       const historyRes = await fetch(
@@ -132,7 +145,7 @@ function App() {
       const historyData = await historyRes.json()
 
       if (Array.isArray(historyData)) {
-        setTxs(historyData)
+        setTxs(historyData as WalletTransaction[])
       }
     } catch (e) {
       console.error(e)
@@ -141,20 +154,25 @@ function App() {
         setIsLoadingTxs(false)
       }
     }
-  }
+  }, [address, isUnlocked])
 
   useEffect(() => {
     if (!address || !isUnlocked) return
 
-    loadWallet(false)
+    const initialLoad = window.setTimeout(() => {
+      void loadWallet(false)
+    }, 0)
 
     const interval = setInterval(
       () => loadWallet(true),
       10000
     )
 
-    return () => clearInterval(interval)
-  }, [address, isUnlocked])
+    return () => {
+      window.clearTimeout(initialLoad)
+      clearInterval(interval)
+    }
+  }, [address, isUnlocked, loadWallet])
 
   const finalizeSetup = async () => {
     if (password.length < 6) {
@@ -174,6 +192,9 @@ function App() {
 
       setAddress(addr)
       setSeed(tempSeed)
+      setError('')
+      setSuccess('')
+      setPassword('')
       setIsUnlocked(true)
     } catch {
       showErr('Wallet save failed')
@@ -294,73 +315,85 @@ function App() {
 
   return (
     <div className={`app-wrapper ${isUnlocked ? "wallet-screen" : "setup-screen"}`}>
-      <div className={`glass-box active-${activeTab}`}>
-        <header>
-          <div className="wallet-header-brand">
+      <header className="wallet-brand-top">
+        {isUnlocked && address ? (
+          <div className="wallet-copy-bar">
+            <span title={address}>{shortAddress(address)}</span>
+            <button
+              type="button"
+              className={addressCopied ? 'copied' : ''}
+              onClick={async () => {
+                await navigator.clipboard.writeText(address)
+                setAddressCopied(true)
+                window.setTimeout(() => setAddressCopied(false), 1200)
+              }}
+            >
+              {addressCopied ? 'Copied' : 'Copy'}
+            </button>
+          </div>
+        ) : (
+          <>
             <div className="wallet-logo-link" aria-hidden="true">
               <img src="/th3-logo.png?v=3" alt="" />
             </div>
-            <h1>Wallet</h1>
-          </div>
-
-          {isUnlocked && address && (
-            <div className="extension-address-bar">
-              <span title={address}>{shortAddress(address)}</span>
-              <button
-                type="button"
-                className={addressCopied ? 'copied' : ''}
-                onClick={async () => {
-                  await navigator.clipboard.writeText(address)
-                  setAddressCopied(true)
-                  window.setTimeout(() => setAddressCopied(false), 1200)
-                }}
-              >
-                {addressCopied ? 'Copied' : 'Copy'}
-              </button>
+            <div>
+              <h1>Wallet TH3</h1>
             </div>
-          )}
+          </>
+        )}
+      </header>
 
-          {isUnlocked && (
-            <div className="nav-bar">
-              <span
-                className={activeTab === 'send' ? 'active' : ''}
-                onClick={() => setActiveTab('send')}
-              >
-                Send
-              </span>
+      {isUnlocked && (
+        <div className="ig-stories" aria-label="Wallet quick actions">
+          <button
+            type="button"
+            className={activeTab === 'wallet' ? 'active' : ''}
+            onClick={() => setActiveTab('wallet')}
+          >
+            <span>
+              <img src="/th3-logo.png?v=3" alt="" />
+            </span>
+            <strong>Balance</strong>
+          </button>
 
-              <span
-                className={activeTab === 'wallet' ? 'active' : ''}
-                onClick={() => setActiveTab('wallet')}
-              >
-                Wallet
-              </span>
+          <button
+            type="button"
+            className={activeTab === 'send' ? 'active' : ''}
+            onClick={() => setActiveTab('send')}
+          >
+            <span>↗</span>
+            <strong>Send</strong>
+          </button>
 
-              <span
-                className={activeTab === 'txs' ? 'active' : ''}
-                onClick={() => setActiveTab('txs')}
-              >
-                History
-              </span>
+          <button
+            type="button"
+            className={activeTab === 'txs' ? 'active' : ''}
+            onClick={() => setActiveTab('txs')}
+          >
+            <span>↺</span>
+            <strong>History</strong>
+          </button>
 
-              <span
-                className={activeTab === 'sec' ? 'active' : ''}
-                onClick={() => setActiveTab('sec')}
-              >
-                Security
-              </span>
-            </div>
-          )}
-        </header>
+          <button
+            type="button"
+            className={activeTab === 'sec' ? 'active' : ''}
+            onClick={() => setActiveTab('sec')}
+          >
+            <span>⌘</span>
+            <strong>Vault</strong>
+          </button>
+        </div>
+      )}
 
-        {error && (!isChromeExtension || !isUnlocked) && (
+      <div className={`glass-box active-${activeTab}`}>
+        {error && (
           <div className="error-msg">
             {error}
           </div>
         )}
 
         {!isUnlocked ? (
-          <div>
+          <div className="setup-panel">
             {address ? (
               <>
                 <input
@@ -380,17 +413,17 @@ function App() {
                 {view === 'login' && (
                   <div className="setup-actions">
                     <button
+                      className="primary-action"
                       onClick={() => {
                         setTempSeed(bip39.generateMnemonic())
                         setView('create-show')
                       }}
-                      style={{ marginBottom: '10px' }}
                     >
                       Create
                     </button>
 
                     <button
-                      className="reset-btn"
+                      className="secondary-action"
                       onClick={() => setView('import-input')}
                     >
                       Import
@@ -409,8 +442,8 @@ function App() {
                     </div>
 
                     <button
+                      className="primary-action"
                       onClick={() => setView('set-pass')}
-                      style={{ marginTop: '15px' }}
                     >
                       Saved
                     </button>
@@ -432,6 +465,7 @@ function App() {
                     />
 
                     <button
+                      className="primary-action"
                       onClick={() => {
                         if (!tempSeed) return showErr('Enter seed phrase')
                         setView('set-pass')
@@ -453,7 +487,7 @@ function App() {
                       }}
                     />
 
-                    <button onClick={finalizeSetup}>
+                    <button className="primary-action" onClick={finalizeSetup}>
                       Confirm
                     </button>
                   </>
@@ -462,11 +496,11 @@ function App() {
             )}
           </div>
         ) : (
-          <div>
+          <main className="view-surface wallet-content">
 
 
             {activeTab === 'wallet' && (
-              <>
+              <section className="wallet-panel">
                 <div className="balance-card">
                   <div className="balance-label">
                     Available Balance
@@ -483,23 +517,11 @@ function App() {
 
                 <div className="wallet-address">
                   <div className="wallet-address-label">
-                    Wallet Address
+                    Receive
                   </div>
 
-                  <div
-                    style={{
-                      marginTop: 20,
-                      display: 'flex',
-                      justifyContent: 'center'
-                    }}
-                  >
-                    <div
-                      style={{
-                        background: '#fff',
-                        padding: 12,
-                        borderRadius: 16
-                      }}
-                    >
+                  <div className="qr-stage">
+                    <div className="qr-card">
                       <QRCode
                         value={receiveLink || address}
                         size={150}
@@ -507,44 +529,16 @@ function App() {
                     </div>
                   </div>
 
-                  <p
-                    style={{
-                      marginTop: 12,
-                      marginBottom: 12,
-                      opacity: .58,
-                      fontSize: 12,
-                      lineHeight: 1.5,
-                      textAlign: 'center'
-                    }}
-                  >
+                  <p className="helper-copy">
                     Scan to open TH3 Wallet with this address prepared in Send.
                   </p>
 
-                  <div className="wallet-address-row">
-                    <span title={address}>
-                      {address}
-                    </span>
-
-                    <button
-                      type="button"
-                      className="copy-btn"
-                      onClick={() => navigator.clipboard.writeText(address)}
-                    >
-                      Copy
-                    </button>
-                  </div>
                 </div>
-              </>
+              </section>
             )}
 
             {activeTab === 'send' && (
-              <>
-                {error && isChromeExtension && (
-                  <div className="send-error-msg">
-                    {error}
-                  </div>
-                )}
-
+              <section className="send-panel">
                 {success && (
                   <div className="send-success-msg">
                     <span>{success}</span>
@@ -576,60 +570,46 @@ function App() {
 
                 <button
                   type="button"
+                  className="secondary-action max-action"
                   onClick={useMaxAmount}
                   disabled={maxSend <= 0 || isSending}
-                  style={{
-                    marginTop: '8px',
-                    background: 'rgba(255, 255, 255, 0.12)',
-                    color: 'rgba(255, 255, 255, 0.82)',
-                    border: '1px solid rgba(255, 255, 255, 0.18)'
-                  }}
                 >
                   Max {formatTH3(maxSend)} TH3
                 </button>
 
                 <button
+                  className="primary-action send-action"
                   disabled={balance <= 0 || isSending || isRefreshingAfterSend}
                   onClick={sendTH3}
-                  style={{
-                    marginTop: '14px'
-                  }}
                 >
                   {isSending ? 'Sending...' : isRefreshingAfterSend ? 'Refreshing wallet...' : 'Send TH3'}
                 </button>
 
-                <div style={{ marginTop: '15px', fontSize: '12px', opacity: 0.7 }}>
-                  Available Balance: {formatTH3(Number(balance))} TH3
-                </div>
-
-                <div style={{ marginTop: '8px', fontSize: '12px', opacity: 0.7 }}>
-                  Network Fee: {formatTH3(txFee)} TH3
-                </div>
-
-                <div
-                  style={{
-                    marginTop: '12px',
-                    padding: '10px 12px',
-                    borderRadius: '10px',
-                    background: 'rgba(255, 255, 255, 0.08)',
-                    border: '1px solid rgba(255, 255, 255, 0.12)',
-                    color: 'rgba(255, 255, 255, 0.72)',
-                    fontSize: '12px'
-                  }}
-                >
-                  Total: {formatTH3(totalSendCost)} TH3
+                <div className="send-summary">
+                  <div>
+                    <span>Available</span>
+                    <strong>{formatTH3(Number(balance))} TH3</strong>
+                  </div>
+                  <div>
+                    <span>Network fee</span>
+                    <strong>{formatTH3(txFee)} TH3</strong>
+                  </div>
+                  <div>
+                    <span>Total</span>
+                    <strong>{formatTH3(totalSendCost)} TH3</strong>
+                  </div>
                 </div>
 
                 {balance <= 0 && (
-                  <div style={{ marginTop: '10px', fontSize: '12px', opacity: 0.7 }}>
+                  <div className="helper-copy helper-card">
                     Mining rewards are maturing.
                   </div>
                 )}
-              </>
+              </section>
             )}
 
             {activeTab === 'txs' && (
-              <div className="scroll-area">
+              <section className="history-panel scroll-area">
                 {isLoadingTxs ? (
                   <div className="tx-item">
                     Loading transactions...
@@ -709,51 +689,50 @@ function App() {
                     )
                   })
                 )}
-              </div>
+              </section>
             )}
 
             {activeTab === 'sec' && (
-              <>
+              <section className="security-panel">
                 {!showSeed ? (
-                  <button onClick={() => setShowSeed(true)}>
+                  <div className="security-card">
+                    <div>
+                      <span className="panel-eyebrow">Private recovery</span>
+                      <h2>Seed phrase</h2>
+                      <p>Reveal it only in a private place. Anyone with this phrase can control the wallet.</p>
+                    </div>
+                    <button className="primary-action" onClick={() => setShowSeed(true)}>
                     Reveal Seed Phrase
-                  </button>
+                    </button>
+                  </div>
                 ) : (
                   <>
                     <div className="seed-box">
                       {seed}
                     </div>
 
-                    <button onClick={() => setShowSeed(false)}>
+                    <button className="secondary-action" onClick={() => setShowSeed(false)}>
                       Hide Seed Phrase
                     </button>
                   </>
                 )}
-              </>
+
+                <button
+                  className="danger-action reset-btn"
+                  onClick={() => {
+                    setDeleteSlideProgress(0)
+                    setConfirmDelete(true)
+                  }}
+                >
+                  Delete Wallet
+                </button>
+              </section>
             )}
-
-            <button
-              className="reset-btn"
-              onClick={() => {
-                if (isChromeExtension) {
-                  const confirmed = window.confirm('Delete this wallet from this browser?')
-                  if (!confirmed) return
-                  localStorage.clear()
-                  window.location.reload()
-                  return
-                }
-
-                setDeleteSlideProgress(0)
-                setConfirmDelete(true)
-              }}
-            >
-              Delete Wallet
-            </button>
-          </div>
+          </main>
         )}
       </div>
 
-      {confirmDelete && !isChromeExtension && (
+      {confirmDelete && (
         <div
           className="delete-modal-backdrop"
           onMouseDown={() => {
@@ -817,54 +796,62 @@ function App() {
         </div>
       )}
 
-      <footer className="wallet-footer">
-        <a className="wallet-footer-link" href="https://th3chain.cloud">
-          Back to main page
+      <aside className="wallet-side-rail" aria-label="TH3 quick links">
+        <a href="https://th3chain.cloud" target="_blank" rel="noreferrer" aria-label="Main page">
+          <span className="rail-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M12 3.2 3 10.6l1.28 1.54L5.5 11.13V20h5.25v-5.5h2.5V20h5.25v-8.87l1.22 1.01L21 10.6 12 3.2Zm4.5 14.8h-1.25v-5.5h-6.5V18H7.5v-8.52L12 5.78l4.5 3.7V18Z" />
+            </svg>
+          </span>
+          <span className="rail-label">Main Page</span>
         </a>
-        <div className="social-strip" aria-label="TH3Chain social links">
-          <a href="https://x.com/TH3ChainCloud" target="_blank" rel="noreferrer" aria-label="TH3Chain on X">
-            <span className="social-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false">
-                <path d="M17.53 3h3.02l-6.6 7.55L21.7 21h-6.08l-4.76-6.22L5.42 21H2.38l7.06-8.07L2 3h6.23l4.3 5.69L17.53 3Zm-1.06 16.16h1.67L7.32 4.74H5.53l10.94 14.42Z" />
-              </svg>
-            </span>
-            <span className="social-label">X / Twitter</span>
-          </a>
-          <a href="https://t.me/TH3ChainCloud" target="_blank" rel="noreferrer" aria-label="TH3Chain on Telegram">
-            <span className="social-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false">
-                <path d="M21.78 4.36 18.5 19.82c-.25 1.1-.9 1.36-1.82.85l-5.02-3.7-2.42 2.33c-.27.27-.5.5-1.03.5l.37-5.1 9.28-8.39c.4-.36-.09-.56-.62-.2L5.77 13.34.83 11.8c-1.07-.34-1.09-1.07.22-1.58L20.4 2.76c.9-.33 1.68.2 1.38 1.6Z" />
-              </svg>
-            </span>
-            <span className="social-label">Telegram</span>
-          </a>
-          <a href="mailto:contact@th3chain.cloud" aria-label="Contact TH3Chain">
-            <span className="social-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false">
-                <path d="M4.5 5.5h15A2.5 2.5 0 0 1 22 8v8a2.5 2.5 0 0 1-2.5 2.5h-15A2.5 2.5 0 0 1 2 16V8a2.5 2.5 0 0 1 2.5-2.5Zm0 2 7.5 5.05L19.5 7.5h-15Zm15 9A.5.5 0 0 0 20 16V9.28l-7.44 5.02a1 1 0 0 1-1.12 0L4 9.28V16a.5.5 0 0 0 .5.5h15Z" />
-              </svg>
-            </span>
-            <span className="social-label">Contact</span>
-          </a>
 
-          {!isChromeExtension && (
-            <a
-              className="chrome-store-link"
-              href="https://chromewebstore.google.com/detail/th3-wallet/kngpfocihoddeicehgikkgjbpkfnpial"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="TH3 Wallet Chrome extension"
-            >
-              <span className="social-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" focusable="false">
-                  <path d="M12 2a10 10 0 0 1 8.66 5H12a5 5 0 0 0-4.33 2.5L4.2 3.5A9.96 9.96 0 0 1 12 2Zm0 20a10 10 0 0 1-8.66-15l4.33 7.5A5 5 0 0 0 12 17h6.93A9.98 9.98 0 0 1 12 22Zm0-7.2A2.8 2.8 0 1 1 12 9.2a2.8 2.8 0 0 1 0 5.6Zm2.17.2A5 5 0 0 0 16.33 10h6.93A10 10 0 0 1 20 20.5L14.17 15Z" />
-                </svg>
-              </span>
-              <span className="social-label">Chrome</span>
-            </a>
-          )}
-        </div>
-      </footer>
+        <a href="https://x.com/TH3ChainCloud" target="_blank" rel="noreferrer" aria-label="Twitter">
+          <span className="rail-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M17.53 3h3.02l-6.6 7.55L21.7 21h-6.08l-4.76-6.22L5.42 21H2.38l7.06-8.07L2 3h6.23l4.3 5.69L17.53 3Zm-1.06 16.16h1.67L7.32 4.74H5.53l10.94 14.42Z" />
+            </svg>
+          </span>
+          <span className="rail-label">Twitter</span>
+        </a>
+
+        <a href="https://th3chain.cloud" target="_blank" rel="noreferrer" aria-label="Web">
+          <span className="rail-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm6.93 9h-3.18a15.9 15.9 0 0 0-1.2-5.02A8.03 8.03 0 0 1 18.93 11ZM12 4.04c.66.95 1.45 3.04 1.7 6.96h-3.4c.25-3.92 1.04-6.01 1.7-6.96ZM4.26 13h3.99c.12 2.03.43 3.79.88 5.06A8.02 8.02 0 0 1 4.26 13Zm3.99-2H4.26a8.02 8.02 0 0 1 4.87-5.06A17.5 17.5 0 0 0 8.25 11ZM12 19.96c-.66-.95-1.45-3.04-1.7-6.96h3.4c-.25 3.92-1.04 6.01-1.7 6.96Zm2.87-1.9c.45-1.27.76-3.03.88-5.06h3.18a8.03 8.03 0 0 1-4.06 5.06Z" />
+            </svg>
+          </span>
+          <span className="rail-label">Web</span>
+        </a>
+
+        <a href="https://chromewebstore.google.com/" target="_blank" rel="noreferrer" aria-label="Chrome">
+          <span className="rail-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M12 2a10 10 0 0 1 8.66 5H12a5 5 0 0 0-4.33 2.5L4.3 3.66A9.96 9.96 0 0 1 12 2Zm0 20a10 10 0 0 1-8.66-15l4.33 7.5A5 5 0 0 0 12 17h6.74A9.98 9.98 0 0 1 12 22Zm8.66-13A10 10 0 0 1 20 18h-8a5 5 0 0 0 4.33-7.5L15.46 9h5.2ZM12 9a3 3 0 1 1 0 6 3 3 0 0 1 0-6Z" />
+            </svg>
+          </span>
+          <span className="rail-label">Chrome</span>
+        </a>
+
+        <a href="https://t.me/TH3ChainCloud" target="_blank" rel="noreferrer" aria-label="Telegram">
+          <span className="rail-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M21.78 4.36 18.5 19.82c-.25 1.1-.9 1.36-1.82.85l-5.02-3.7-2.42 2.33c-.27.27-.5.5-1.03.5l.37-5.1 9.28-8.39c.4-.36-.09-.56-.62-.2L5.77 13.34.83 11.8c-1.07-.34-1.09-1.07.22-1.58L20.4 2.76c.9-.33 1.68.2 1.38 1.6Z" />
+            </svg>
+          </span>
+          <span className="rail-label">Telegram</span>
+        </a>
+
+        <a href="mailto:contact@th3chain.cloud" aria-label="Contact">
+          <span className="rail-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M4.5 5.5h15A2.5 2.5 0 0 1 22 8v8a2.5 2.5 0 0 1-2.5 2.5h-15A2.5 2.5 0 0 1 2 16V8a2.5 2.5 0 0 1 2.5-2.5Zm0 2 7.5 5.05L19.5 7.5h-15Zm15 9A.5.5 0 0 0 20 16V9.28l-7.44 5.02a1 1 0 0 1-1.12 0L4 9.28V16a.5.5 0 0 0 .5.5h15Z" />
+            </svg>
+          </span>
+          <span className="rail-label">Contact</span>
+        </a>
+      </aside>
+
     </div>
   )
 }

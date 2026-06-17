@@ -276,7 +276,7 @@ function selectUtxosForAmount(utxos: TH3Utxo[], amountSats: number): {
 } {
   const selected: TH3Utxo[] = []
   let selectedTotal = 0
-  let feeSats = MIN_FEE_SATS
+  let feeSats: number
 
   for (const utxo of utxos) {
     selected.push(utxo)

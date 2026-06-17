@@ -7,8 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "build:chrome": "tsc -b && vite build --config vite.extension.config.ts && cp extension/chrome/manifest.json extension/chrome/dist/ && mkdir -p extension/chrome/dist/icons && cp extension/chrome/icons/* extension/chrome/dist/icons/"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@noble/hashes": "^2.2.0",
@@ -21,7 +20,6 @@
     "bs58check": "^4.0.0",
     "buffer": "^6.0.3",
     "crypto-js": "^4.2.0",
-    "ethers": "^6.16.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "react-qr-code": "^2.0.21"
